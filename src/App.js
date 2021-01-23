@@ -1,25 +1,31 @@
-import logo from './logo.svg';
+import {useState, useEffect} from 'react';
+import {nanoid} from 'nanoid';
+import YearTable from './components/YearTable';
+import MonthTable from './components/MonthTable';
+import SortTable from './components/SortTable';
 import './App.css';
 
-function App() {
+export default function App() {
+  const [list, setList] = useState([]);
+
+  const getFetch = async() => {
+    const response = await fetch(process.env.REACT_APP_FETCH);
+    const answer = await response.json();
+    const list = answer.list;
+    const listWithId = list.map(i => ({...i, id: nanoid()}))
+    setList(listWithId)
+
+  }
+
+  useEffect(() => {
+     getFetch();
+  },[])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div id="app">
+          <MonthTable list={list} />
+          <YearTable list={list} />
+          <SortTable list={list} />
+      </div>
   );
 }
-
-export default App;
